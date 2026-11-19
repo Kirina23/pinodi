@@ -9,12 +9,13 @@
 #        APP_STORE_CONNECT_KEY_IDENTIFIER
 #        APP_STORE_CONNECT_PRIVATE_KEY      (the whole AuthKey_XXXX.p8 text)
 #      Same Apple team as Slay → the same key values work here.
-#   2. Code signing identities:
+#   2. Settings → codemagic.yaml settings → Code signing identities (same Codemagic account as this app):
 #        - iOS certificates: the existing Apple Distribution .p12 (the API key gets 403
-#          when asked to create certificates, so we reuse the one Slay uses).
-#        - iOS provisioning profiles: App Store profile for com.slay.pinodi
+#          when asked to create certificates, so we reuse the one Slay uses). Upload it here too
+#          if Slay lives in another Codemagic account, or the profile shows "Certificate: Not uploaded".
+#        - iOS provisioning profiles: App Store profile for com.pinodi.app
 #          (created at developer.apple.com → Profiles, downloaded as .mobileprovision).
-#   3. The app record "Pinodi: Photo To-Do List" (bundle id com.slay.pinodi) must exist in App Store Connect.
+#   3. The app record "Pinodi: Photo To-Do List" (bundle id com.pinodi.app) must exist in App Store Connect.
 
 workflows:
   ios-testflight:
@@ -24,7 +25,7 @@ workflows:
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.slay.pinodi
+        bundle_identifier: com.pinodi.app
       # Env group only. NO `integrations:` block — a name mismatch there already broke a Slay build.
       groups:
         - pinodi_signing

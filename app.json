@@ -8,7 +8,7 @@
     "userInterfaceStyle": "light",
     "backgroundColor": "#f7f6f2",
     "ios": {
-      "bundleIdentifier": "com.slay.pinodi",
+      "bundleIdentifier": "com.pinodi.app",
       "buildNumber": "1",
       "supportsTablet": true,
       "requireFullScreen": false,

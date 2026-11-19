@@ -32,7 +32,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>com.slay.pinodi</string>
+          <string>com.pinodi.app</string>
         </array>
       </dict>
     </array>

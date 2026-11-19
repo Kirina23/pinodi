@@ -18,7 +18,7 @@ test('the «Включить Pro» test switch exists only on the web stand, nev
   assert.ok(/export function setTestPro\(_on: boolean\) \{\}/.test(native), 'store.ts: setTestPro must do nothing');
 });
 test('one bundle id everywhere', () => {
-  const id = 'com.slay.pinodi';
+  const id = 'com.pinodi.app';
   assert.equal(app.ios.bundleIdentifier, id);
   assert.ok(yaml.includes(`bundle_identifier: ${id}`));
   assert.ok(pbx.includes(`PRODUCT_BUNDLE_IDENTIFIER = "${id}"`));
@@ -75,7 +75,7 @@ test('reminders are local: native module present, no push entitlement needed', (
   assert.ok(swift.includes('UNCalendarNotificationTrigger') && !swift.includes('registerForRemoteNotifications'));
 });
 test('the discount product is in the same Pro family and counts as Pro', () => {
-  assert.ok(PRODUCT_IDS.includes('com.slay.pinodi.pro.yearly.offer'));
+  assert.ok(PRODUCT_IDS.includes('com.pinodi.app.pro.yearly.offer'));
 });
 test('picked file helpers', () => {
   assert.equal(kindOf('image/heic', 'IMG.HEIC'), 'image');

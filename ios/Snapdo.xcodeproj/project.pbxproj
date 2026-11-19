@@ -294,7 +294,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.slay.pinodi";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.pinodi.app";
 				PRODUCT_NAME = "Snapdo";
 				SWIFT_OBJC_BRIDGING_HEADER = "Snapdo/Snapdo-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -324,7 +324,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.slay.pinodi";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.pinodi.app";
 				PRODUCT_NAME = "Snapdo";
 				SWIFT_OBJC_BRIDGING_HEADER = "Snapdo/Snapdo-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

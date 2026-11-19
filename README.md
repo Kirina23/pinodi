@@ -1,7 +1,7 @@
 # Pinodi: Photo To-Do List
 
 Store name: «Pinodi: Photo To-Do List» / «Pinodi: список задач по фото». On the home screen: «Pinodi».
-The internal project name stays Snapdo (Xcode project and scheme, modules, storage keys) — users never see it; the app was called Snapdo and then Pushpin before it became Pinodi (18.11.2026). Bundle id `com.slay.pinodi` (same prefix as Slay: `com.slay.teleprompter`), product ids `com.slay.pinodi.pro.*`.
+The internal project name stays Snapdo (Xcode project and scheme, modules, storage keys) — users never see it; the app was called Snapdo and then Pushpin before it became Pinodi (18.11.2026). Bundle id `com.pinodi.app` (an independent app, its own prefix; archive №19 had `com.slay.pinodi`), product ids `com.pinodi.app.pro.*`.
 
 Expo SDK 58 · React Native 0.88 (New Architecture) · TypeScript strict · bare workflow with a
 committed `ios/` folder · built by Codemagic (`codemagic.yaml`) → TestFlight.

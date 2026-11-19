@@ -1,9 +1,9 @@
 // Snapdo Pro — auto-renewable subscriptions in one group ("Snapdo Pro") in App Store Connect.
-export const PRODUCT_MONTHLY = 'com.slay.pinodi.pro.monthly';
-export const PRODUCT_YEARLY = 'com.slay.pinodi.pro.yearly';
+export const PRODUCT_MONTHLY = 'com.pinodi.app.pro.monthly';
+export const PRODUCT_YEARLY = 'com.pinodi.app.pro.yearly';
 // The same year of Pro at a lower price, sold only on the one-time offer screen (after 3 weeks).
 // Same subscription group, so it can never be bought twice alongside the others.
-export const PRODUCT_YEARLY_OFFER = 'com.slay.pinodi.pro.yearly.offer';
+export const PRODUCT_YEARLY_OFFER = 'com.pinodi.app.pro.yearly.offer';
 /** The plans on the regular Pro sheet. */
 export const PLAN_IDS = [PRODUCT_YEARLY, PRODUCT_MONTHLY];
 /** Every product that turns Pro on. */
