@@ -1,0 +1,109 @@
+# Pinodi (internal project name Snapdo) — Codemagic → TestFlight.
+#
+# How it works: every push to `main` builds the committed ios/ folder on a cloud Mac
+# and uploads the .ipa to App Store Connect (TestFlight). No EAS, no prebuild in CI.
+#
+# One-time setup in the Codemagic UI (never in this file, never in git):
+#   1. Teams → Environment variables → group `pinodi_signing` (mark every value Secret):
+#        APP_STORE_CONNECT_ISSUER_ID
+#        APP_STORE_CONNECT_KEY_IDENTIFIER
+#        APP_STORE_CONNECT_PRIVATE_KEY      (the whole AuthKey_XXXX.p8 text)
+#      Same Apple team as Slay → the same key values work here.
+#   2. Code signing identities:
+#        - iOS certificates: the existing Apple Distribution .p12 (the API key gets 403
+#          when asked to create certificates, so we reuse the one Slay uses).
+#        - iOS provisioning profiles: App Store profile for com.slay.pinodi
+#          (created at developer.apple.com → Profiles, downloaded as .mobileprovision).
+#   3. The app record "Pinodi: Photo To-Do List" (bundle id com.slay.pinodi) must exist in App Store Connect.
+
+workflows:
+  ios-testflight:
+    name: Pinodi iOS - TestFlight
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.slay.pinodi
+      # Env group only. NO `integrations:` block — a name mismatch there already broke a Slay build.
+      groups:
+        - pinodi_signing
+      # RN 0.88 needs Node 22.13+. Pinned so a silent tool update can't break a build.
+      node: 22.22.0
+      # Pinned, never `latest`: iOS 27.1 SDK (scene life cycle, full screen on iPhone Duo).
+      xcode: 27.1
+      cocoapods: default
+      vars:
+        XCODE_WORKSPACE: "ios/Snapdo.xcworkspace"
+        XCODE_SCHEME: "Snapdo"
+        # "auto" = Codemagic build counter + offset. Put a plain number here to force one.
+        MANUAL_BUILD_NUMBER: "auto"
+        BUILD_NUMBER_OFFSET: 0
+        # The version buyers see in the App Store.
+        APP_VERSION: "1.0.0"
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+    scripts:
+      - name: Install JavaScript dependencies
+        script: npm ci
+
+      - name: Type check
+        script: npx tsc --noEmit -p tsconfig.json
+
+      - name: Tests
+        # Pure-logic tests (layout, dates, limits, texts). Broken logic never reaches TestFlight.
+        script: npm test
+
+      - name: Check that demo switches are off
+        script: |
+          set -e
+          if grep -q "DEMO_PRO_ENABLED = true" src/purchases/config.ts; then
+            echo "DEMO_PRO_ENABLED is true — refusing to ship a build with free Pro."; exit 1
+          fi
+
+      - name: Set version and build number
+        script: |
+          set -e
+          if [ "$MANUAL_BUILD_NUMBER" = "auto" ]; then
+            NEW_BUILD=$((BUILD_NUMBER + BUILD_NUMBER_OFFSET))
+          else
+            NEW_BUILD="$MANUAL_BUILD_NUMBER"
+          fi
+          echo "Version $APP_VERSION, build $NEW_BUILD"
+          PLIST=$(find ios -maxdepth 2 -name Info.plist -not -path "*/Pods/*" | head -1)
+          ( cd ios && agvtool new-version -all "$NEW_BUILD" )
+          ( cd ios && agvtool new-marketing-version "$APP_VERSION" )
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $NEW_BUILD" "$PLIST" || /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string $NEW_BUILD" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $APP_VERSION" "$PLIST" || /usr/libexec/PlistBuddy -c "Add :CFBundleShortVersionString string $APP_VERSION" "$PLIST"
+          # Verify — fail early instead of uploading a build App Store Connect will reject.
+          [ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$PLIST")" = "$NEW_BUILD" ] || { echo "Build number did not stick"; exit 1; }
+          [ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$PLIST")" = "$APP_VERSION" ] || { echo "Version did not stick"; exit 1; }
+
+      - name: Install CocoaPods
+        script: cd ios && pod install --repo-update
+
+      - name: Set up code signing on the Xcode project
+        # ALWAYS pass --project. Without it the tool also scans node_modules and fails on
+        # stray .xcodeproj files inside packages (it happened with Slay).
+        script: xcode-project use-profiles --project ios/Snapdo.xcodeproj
+
+      - name: Build the ipa
+        script: xcode-project build-ipa --workspace "$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME" --config Release
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+
+    publishing:
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        # Keep false until the TestFlight "Test Information" forms are filled in,
+        # otherwise a good upload still shows as a red build.
+        submit_to_testflight: false
+        submit_to_app_store: false

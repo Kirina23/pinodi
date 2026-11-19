@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "Pinodi",
+    "NSCameraUsageDescription": "Pinodi uses the camera so you can take a photo of a task.",
+    "NSPhotoLibraryUsageDescription": "Pinodi lets you pick photos and videos for your tasks.",
+    "NSPhotoLibraryAddUsageDescription": "Pinodi saves pictures of your plans to Photos when you choose Save Image."
+  }
+}

@@ -1,0 +1,4 @@
+"CFBundleDisplayName" = "Pinodi";
+"NSCameraUsageDescription" = "Pinodi открывает камеру, чтобы сфотографировать задачу.";
+"NSPhotoLibraryUsageDescription" = "Pinodi даёт выбрать фото и видео для задач.";
+"NSPhotoLibraryAddUsageDescription" = "Pinodi сохраняет картинку плана в «Фото», когда ты нажимаешь «Сохранить изображение».";

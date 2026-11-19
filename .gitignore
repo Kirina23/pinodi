@@ -1,0 +1,41 @@
+# Snapdo — what never goes to git.
+
+# dependencies
+node_modules/
+
+# Expo / Metro
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+.metro-health-check*
+
+# iOS build products (the ios/ folder itself IS committed — Codemagic builds it directly)
+ios/Pods/
+ios/build/
+ios/.xcode.env.local
+*.xcuserstate
+xcuserdata/
+DerivedData/
+
+# SECRETS — must never be committed or zipped
+*.p8
+*.p12
+*.pem
+*.key
+*.mobileprovision
+*.jks
+credentials.json
+.env
+.env*.local
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+
+# typescript
+*.tsbuildinfo
